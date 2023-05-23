@@ -1,0 +1,93 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\harshm.shah\\Workspace\\FT_Jan_2023\\FT_4.0_NetCore\\FT_4.0_NetCore004\\harshshah_coder_2808\\Q001\\Source\\Final Exam\\ExamApi\\ExamApi.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\harshm.shah\\Workspace\\FT_Jan_2023\\FT_4.0_NetCore\\FT_4.0_NetCore004\\harshshah_coder_2808\\Q001\\Source\\Final Exam\\ExamApi\\ExamApi.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\harshm.shah\\Workspace\\FT_Jan_2023\\FT_4.0_NetCore\\FT_4.0_NetCore004\\harshshah_coder_2808\\Q001\\Source\\Final Exam\\ExamApi\\ExamApi.csproj",
+        "projectName": "ExamApi",
+        "projectPath": "C:\\Users\\harshm.shah\\Workspace\\FT_Jan_2023\\FT_4.0_NetCore\\FT_4.0_NetCore004\\harshshah_coder_2808\\Q001\\Source\\Final Exam\\ExamApi\\ExamApi.csproj",
+        "packagesPath": "C:\\Users\\harshm.shah\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\harshm.shah\\Workspace\\FT_Jan_2023\\FT_4.0_NetCore\\FT_4.0_NetCore004\\harshshah_coder_2808\\Q001\\Source\\Final Exam\\ExamApi\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\harshm.shah\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[6.0.16, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.16, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.16, )"
+            },
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[6.0.13, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.2.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

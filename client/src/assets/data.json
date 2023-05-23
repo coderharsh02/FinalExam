@@ -1,0 +1,111 @@
+{
+  "Users": [
+    {
+      "UserName": "reena",
+
+      "Password": "reena@123",
+
+      "Role": "Admin"
+    },
+
+    {
+      "UserName": "ronit",
+
+      "Password": "ronit",
+
+      "Role": "Student"
+    },
+
+    {
+      "UserName": "jay",
+
+      "Password": "jay",
+
+      "Role": "Student"
+    }
+  ],
+
+  "UserLeaveBalance": [
+    {
+      "UserName": "reena",
+      "PL": 12,
+      "SL": 6,
+      "CL": 6
+    },
+    {
+      "UserName": "ronit",
+      "PL": 9,
+      "SL": 3,
+      "CL": 2
+    },
+    {
+      "UserName": "jay",
+      "PL": 5,
+      "SL": 2,
+      "CL": 1
+    }
+  ],
+
+  "UserLeaveHistory": [
+    {
+      "UserName": "reena",
+      "Leaves": [
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        },
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        },
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        }
+      ]
+    },
+    {
+      "UserName": "ronit",
+      "Leaves": [
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        },
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        },
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        }
+      ]
+    },
+    {
+      "UserName": "jay",
+      "Leaves": [
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        },
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        },
+        {
+          "FromDate": "2019-01-01",
+          "ToDate": "2019-01-01",
+          "Reason": "xyz"
+        }
+      ]
+    }
+  ]
+}

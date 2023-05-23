@@ -1,0 +1,23 @@
+<button (click)="View = 1; loadViewStudent()">View Students</button>
+<button (click)="View = 3">Register Student</button>
+
+<div class="container" *ngIf="View == 1">
+    <h1>Leave History</h1>
+    <table>
+        <tr>
+            <th>UserName</th>
+            <th>View Leaves</th>
+        </tr>
+        <tr *ngFor="let leave of UserDetail">
+            <td>{{ leave.userName }}</td>
+            <td><button type="button" class="btn btn-primary" (click)="viewLeaves(leave.userName)">View Leaves</button></td>
+    </table>
+</div>
+
+<ng-container *ngIf="View == 2">
+    <app-list-leave [role]="0" [username]="username"></app-list-leave>
+</ng-container>
+
+<ng-container *ngIf="View == 3">
+    <app-register></app-register>
+</ng-container>

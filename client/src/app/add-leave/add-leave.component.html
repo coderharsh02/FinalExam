@@ -1,0 +1,84 @@
+<div class="container" *ngIf="UserDetail">
+  <form [formGroup]="LeaveApplicationForm">
+    <h2>Add Leave Component</h2>
+
+    <h3>UserName: {{ UserDetail.userName }}</h3>
+    <h3>Leaves Available:</h3>
+    <ul>
+      <li>
+        <h4>CL: {{ UserDetail.userLeaveBalance.cl }}</h4>
+        <h4>PL: {{ UserDetail.userLeaveBalance.pl }}</h4>
+        <h4>SL: {{ UserDetail.userLeaveBalance.sl }}</h4>
+      </li>
+    </ul>
+
+    <div>
+      <mat-form-field>
+        <mat-label>Select a leave type</mat-label>
+        <mat-select formControlName="LeaveType">
+          <ng-container *ngFor="let item of UserDetail.userLeaveBalance | keyvalue">
+            <mat-option *ngIf="item.key != 'userName'" [disabled]="item.value <= 0" [value]="item.key">
+              {{ item.key }}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label>Enter Range For leave</mat-label>
+        <mat-date-range-input [dateFilter]="weekendsDatesFilter" [rangePicker]="picker" [min]="DatePickerRange.minDate"
+          [max]="DatePickerRange.maxDate" [disabled]="leaveType?.value == ''">
+          <input matStartDate formControlName="FromDate" placeholder="From date"
+            (dateInput)="fromDateInputEvent('input', $any($event))"
+            (dateChange)="fromDateInputEvent('change', $any($event))" />
+          <input matEndDate formControlName="ToDate" placeholder="To date" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker-toggle matSuffix (click)="clearDateInput()">
+          <mat-icon matDatepickerToggleIcon>X</mat-icon>
+        </mat-datepicker-toggle>
+        <mat-date-range-picker #picker> </mat-date-range-picker>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label>Reason For Leave</mat-label>
+        <input matInput class="form-control" formControlName="Reason" />
+      </mat-form-field>
+    </div>
+
+    <ng-container *ngIf="leaveType?.value == 'sl'; else notSl">
+
+      <div class="row" style="margin-bottom:15px;">
+        <mat-label>Medical Certificate</mat-label>
+        <div class="col-md-3">
+          <input type="file" #file formControlName="file" placeholder="Choose file" style="display:none;">
+          <button type="button" class="btn btn-success" (click)="file.click()">Upload File</button>
+        </div>
+        <div class="col-md-4">
+          <span class="upload" *ngIf="progress > 0">
+            {{progress}}%
+          </span>
+          <span class="upload" *ngIf="message">
+            {{message}}
+          </span>
+        </div>
+
+      </div>
+      <button class="btn btn-primary" type="button" (click)="AddLeave(LeaveApplicationForm.getRawValue(), file.files)"
+        [disabled]="!LeaveApplicationForm.valid">
+        Save
+      </button>
+    </ng-container>
+
+    <ng-template #notSl>
+      <button class="btn btn-primary" type="button" (click)="AddLeave(LeaveApplicationForm.getRawValue())"
+        [disabled]="!LeaveApplicationForm.valid">
+        Save
+      </button>
+    </ng-template>
+  </form>
+</div>

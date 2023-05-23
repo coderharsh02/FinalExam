@@ -1,0 +1,653 @@
+<template>
+    <div class="lms-form">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 form-group">
+                <div class="pull-left">
+                    <bread-crumb></bread-crumb>
+                </div>
+                <div class="pull-right">
+                    <a href="javascript:history.go(-1)" class="btn btn-secondary"><i class="fa fa-chevron-left m-r-3"></i> Prev Page</a>
+                </div>
+            </div>
+        </div>
+        <div class="pages-title">
+            <h2 class="f-h2">
+                Course Detail (<span v-if="courseResponse.courseName != null">{{courseResponse.courseName}}</span>)
+            </h2>
+        </div>
+        <b-tabs v-model="courseActiveTag"  @activate-tab="onTabChange">
+            <b-tab title="Main" :title-item-class="!canAccessMainTab || courseResponse.isPathloreOrCBTCourse ? 'd-none': ''">
+                <div v-if="courseActiveTag == courseTab.Details && canAccessMainTab">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 form-group">
+                            <label class="col-form-label">Course Name</label>
+                            <span>{{courseResponse.courseName}}</span>
+                        </div>
+                        <div class="col-md-6 col-lg-3 form-group">
+                            <label class="col-form-label">Status</label>
+                            <span>
+                                {{courseResponse.statusName}}
+                                <span v-if="courseResponse.status == enumCourseStatus.Rejected">(See Reason Below)</span>
+                            </span>
+                        </div>
+                        <div class="col-md-4 col-lg-3 form-group">
+                            <label class="col-form-label">Course Code</label>
+                            <span>{{courseResponse.courseCode}}</span>
+                        </div>
+                        <div class="col-md-4 col-lg-3 form-group">
+                            <label class="col-form-label">Course Type</label>
+                            <span v-if="courseResponse.courseType != null">{{courseResponse.courseType.courseType1}}</span>
+                            <span v-else></span>
+                        </div>
+                        <div class="col-md-4 col-lg-3 form-group">
+                            <label class="col-form-label">Modality</label>
+                            <span>{{displayCourseStatus}}</span>
+                        </div>
+                        <div class="col-md-6 col-lg-3 form-group">
+                            <label class="col-form-label">Pathlore Course Code</label>
+                            <span>{{courseResponse.pathloreCourseCode}}</span>
+                        </div>
+                        <div class="col-md-6 col-lg-3 form-group">
+                            <label class="col-form-label">Course Subtitle</label>
+                            <span>{{courseResponse.courseSubtitle}}</span>
+                        </div>
+                        <div class="col-md-6 col-lg-3 form-group">
+                            <label class="col-form-label">Portfolio Name</label>
+                            <span class="prereq">
+                                <ul>
+                                    <li v-for="(element, index) in courseResponse.coursePortfolio">
+                                        {{ element.portfolioName}}
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                        <div class="col-md-6 col-lg-3 form-group">
+                            <label class="col-form-label">Prereq. Courses</label>
+                            <span>
+                                <ul>
+                                    <li v-for="(element, index) in courseResponse.coursePrerequisitesCourse">
+                                        {{ element.prerequisiteCourseCode}} - {{ element.prerequisiteCourseName}}
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                        <div class="col-md-4 col-lg-3 form-group">
+                            <label class="col-form-label">Days</label>
+                            <span>{{courseResponse.daysOfTraining}}</span>
+                        </div>
+                        <div class="col-md-4 col-lg-3 form-group">
+                            <label class="col-form-label">Secondary Event</label>
+                            <span>{{courseResponse.secondaryEvent}}</span>
+                        </div>
+                        <div class="col-md-6 col-lg-3 form-group">
+                            <label class="col-form-label">Credits</label>
+                            <span>
+                                <ul>
+                                    <li v-for="(element, index) in courseResponse.courseCredits">
+                                        <span v-if="index != 0"></span>
+                                        <span class="creditsleft">{{element.creditTypeName}}</span>
+                                        <span class="creditsright">{{element.creditValue}}</span>
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                        <div class="col-md-4 col-lg-3 form-group">
+                            <label class="col-form-label">Latest Catalog</label>
+                            <span>{{courseResponse.catalogName}}</span>
+                        </div>
+                        <div class="col-md-4 col-lg-4 form-group">
+                            <label class="col-form-label">Course Image</label>
+                            <div id="preview" v-if="courseResponse.courseImage != null" class="col-md-8 preview-file">
+                                <img v-bind:src="'data:image/jpeg;base64,'+courseResponse.courseImage.fileBase64" class="img-w-400-h-200"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-12 form-group">
+                            <label class="col-form-label">Course Description</label>
+                            <span v-html="courseDesc" class="coursedesciption">{{courseResponse.courseDescription}}</span>
+                        </div>
+                        <div class="col-md-12 col-lg-12 form-group" v-if="courseResponse.status == enumCourseStatus.Rejected">
+                            <label class="col-form-label">Rejected Reason</label>
+                            <span>{{courseResponse.rejectionReason}}</span>
+                        </div>
+                        <div class="col-md-12 col-lg-12 form-group">
+                            <label class="col-form-label">Notes</label>
+                            <span v-if="courseResponse.notes != null">{{courseResponse.notes}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-lg-3 form-group">
+                            <label class="col-form-label">Added By</label>
+                            <span>{{courseResponse.addedByName}}</span>
+                        </div>
+                        <div class="col-md-3 col-lg-3 form-group">
+                            <label class="col-form-label">Added On</label>
+                            <span>{{courseResponse.addedOn | formatDateWithoutSecondTime}}</span>
+                        </div>
+                        <div class="col-md-3 col-lg-3 form-group">
+                            <label class="col-form-label">Updated By</label>
+                            <span>{{courseResponse.updatedByName}}</span>
+                        </div>
+                        <div class="col-md-3 col-lg-3 form-group">
+                            <label class="col-form-label">Updated On</label>
+                            <span>{{courseResponse.updatedOn | formatDateWithoutSecondTime}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <hr class="hrline1">
+                        </div>
+                    </div>
+                    <div class="custom-search">
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6">
+                                <h3 class="f-h3">
+                                    <i class="fa fa-list font"></i> Class List
+                                </h3>
+                            </div>
+                            <div class="col-sm-6 text-right" v-if="status === courseStatus.readyForClassCreation && accesses.CanAddClass === true && !courseResponse.isPathloreOrCBTCourse">
+                                <button type="button" @click="openCreateClass(courseResponse.courseId)" class="btn btn-blue m-b-15">
+                                    <i class="fa fa-user-plus"></i> Create Class
+                                </button>
+                            </div>
+                        </div>
+                        <div v-show="isGridDataLoaded">
+                            <div v-if="classes.length!=0">
+                                <div class="vgt-global-search vgt-clearfix ">
+                                    <div class="vgt-global-search__input vgt-pull-left">
+                                        <form role="search" autocomplete="off">
+                                            <label for="searchInput">
+                                                <span aria-hidden="true" class="input__icon">
+                                                    <i class="magnifying-glass"></i>
+                                                </span>
+                                                <span class="sr-only">Search</span>
+                                            </label>
+                                            <b-form-input id="searchInput"
+                                                        ref="searchRef"
+                                                        type="search"
+                                                        v-model.lazy="searchTerm"
+                                                        placeholder="Search by Class Name, Classroom, Start Time or Ends Time."
+                                                        class="vgt-input vgt-pull-left" />
+                                        </form>
+                                    </div>
+                                    <div class="vgt-global-search__actions vgt-pull-right"></div>
+                                </div>
+                                <vue-good-table v-show="totalCourseClassRows > 0" v-if="classes.length > 0" :columns="columns"
+                                                :rows="classes"
+                                                :rtl="direction" class="m-b-30"
+                                                :search-options="{
+                                                    enabled: true,
+                                                    externalQuery: searchTerm
+                                                }"
+                                                :select-options="{ enabled: false,
+                                                    selectOnCheckboxOnly: true,
+                                                    selectionInfoClass: 'custom-class',
+                                                    selectionText: 'rows selected',
+                                                    clearSelectionText: 'clear',
+                                                    disableSelectInfo: true,
+                                                    selectAllByGroup: true,
+                                                }"
+                                                :pagination-options="{ enabled: true, perPage:pageLength}"
+                                                @on-search="onCourseClassSearch"
+                                                v-on:on-sort-change="onSortChange" compactMode>
+                                    <template slot="table-row"
+                                            slot-scope="props">
+                                        <span v-if="props.column.field === 'capacity'">
+                                            {{ props.row.minCapacity}} / {{props.row.maxCapacity}}
+                                        </span>
+                                        <span v-if="props.column.field === 'className'">
+                                            <router-link :to="{ name: 'trainingclassDetails', params: { classId: props.row.classId, routeCategoryValue: routeCategoryValue}, query: { tab: 0 } }">
+                                                <span>{{ props.row.className}}</span>
+                                            </router-link>
+                                        </span>
+                                        <span v-else>
+                                            {{ props.formattedRow[props.column.field]}}
+                                        </span>
+                                    </template>
+                                    <template slot="pagination-bottom"
+                                            slot-scope="props">
+                                        <div class="responsive-pagination d-flex flex-wrap">
+                                            <div class="l-pagination d-flex align-items-center mb-0 mt-1">
+                                                <span class="text-nowrap" id="lbl-paging-text">
+                                                    Show
+                                                </span>
+                                                <b-form-select v-if="totalCourseClassRows > 0" v-model="pageLength" aria-labelledby="lbl-paging-text"
+                                                            :options="['10','15','25']"
+                                                            class="mx-1"
+                                                            v-on:change="(value)=>props.perPageChanged({currentPerPage:value})" />
+                                                <span class="text-nowrap"> items per page. </span>
+                                            </div>
+                                            <div class="r-pagination d-flex align-items-center mt-1">
+                                                <pageRecords :currentPage="currentPage" :pageSize="pageLength" :records="totalCourseClassRows"></pageRecords>
+                                                <b-pagination v-if="totalCourseClassRows > 0" v-model="currentPage"
+                                                            :total-rows="props.total"
+                                                            :per-page="pageLength"
+                                                            first-number
+                                                            last-number
+                                                            align="right"
+                                                            prev-class="prev-item"
+                                                            next-class="next-item"
+                                                            class="ml-2 mb-0"
+                                                            v-on:change="(value)=>props.pageChanged({currentPage:value})">
+                                                    <template #prev-text>
+                                                        <chevron-left-icon size="1.5x" class="custom-class"></chevron-left-icon>
+                                                    </template>
+
+                                                    <template #next-text>
+                                                        <chevron-right-icon size="1.5x" class="custom-class"></chevron-right-icon>
+                                                    </template>
+                                                </b-pagination>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </vue-good-table>
+                            </div>
+                            <div v-else-if="(searchTerm == '' || searchTerm == null || searchTerm == undefined)" class="font-weight600">
+                                There are no Classes found.
+                            </div>
+                            <div class="font-weight600" v-show="totalCourseClassRows == 0 && classes.length > 0">
+                                There are no classes found for the given search criteria. Please modify your search criteria to get relevant data.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-20">
+                        <div class="col-md-12 col-lg-12 form-group">
+                            <div class="pull-left">
+                                <a href="javascript:history.go(-1)" class="btn btn-secondary"><i class="fa fa-chevron-left m-r-3"></i> Prev Page</a>
+                            </div>
+                            <div class="pull-right">
+                                <button class="btn btn-red mr-1" @click="deleteCourse" v-if="accesses.CanDelete === true && courseResponse.status != enumCourseStatus.Archived && !courseResponse.isPathloreOrCBTCourse"><i class="fa fa-trash"></i> Delete Course</button>
+                                <button v-if="courseResponse.isActive === true && accesses.CanEdit === true && courseResponse.canCourseArchived === true && !courseResponse.isPathloreOrCBTCourse" class="btn btn-blue mr-1" @click="archiveCourse(courseResponse.courseId)"><i class="fa fa-archive"></i> Archive Course</button>
+                                <button class="btn btn-blue" @click="editCourse(courseResponse.courseId)" v-if="accesses.CanEdit === true && courseResponse.status != enumCourseStatus.Archived && !courseResponse.isPathloreOrCBTCourse"><i class="fa fa-pencil"></i> Edit Course</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </b-tab>
+            <b-tab title="Course Billing" :title-item-class="!canAccessClassBillingTab ? 'd-none': ''">
+                <div v-if="courseActiveTag == courseTab.CourseBilling && (canAccessClassBillingTab || (!canAccessClassBillingTab && redirect()))">
+                    <courseBilling ref="courseBillingRef"></courseBilling>
+                </div>
+            </b-tab>
+            <b-tab title="Tasks" :title-item-class="!canAccessTaskTab ? 'd-none': ''">
+                <div v-if="courseActiveTag == courseTab.TaskToBeDone && (canAccessTaskTab || (!canAccessTaskTab && redirect()))">
+                    <courseTasks ref="courseTasksRef"></courseTasks>
+                </div>
+            </b-tab>
+            <b-tab title="Course Materials" :title-item-class="!canAccessMaterialsTab ? 'd-none': ''">
+                <div v-if="courseActiveTag == courseTab.CourseMaterials && (canAccessMaterialsTab || (!canAccessMaterialsTab && redirect()))">
+                    <courseMaterials ref="courseMaterialRef"></courseMaterials>
+                </div>
+            </b-tab>    
+            <b-tab title="Audit Log" :title-item-class="!canAccessAuditLogTab ? 'd-none': ''">
+                <div v-if="courseActiveTag == courseTab.AuditLog && (canAccessAuditLogTab || (!canAccessAuditLogTab && redirect()))">
+                    <courseAuditLog></courseAuditLog>
+                </div>
+            </b-tab>
+        </b-tabs>
+    </div>
+</template>
+
+<script>
+    import { courseResponse } from "@/admin/types/models/course.js";
+    import { BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect, BDropdown, BDropdownItem, BTabs, BTab } from 'bootstrap-vue';
+    import { ChevronRightIcon, ChevronLeftIcon } from 'vue-feather-icons';
+    import { VueGoodTable } from 'vue-good-table';
+    import { courseStatus } from '@/admin/types/models/courseStatus.js';
+    import toast from "@/common/services/toastService";
+    import { trainingType as modalityType } from '@/admin/types/models/trainingType.js';
+    import courseTasks from '@/admin/views/courses/CourseTasks.vue';
+    import courseAuditLog from '@/admin/views/courses/CourseAuditLog.vue';
+    import * as gridHelper from '@/common/GridHelper.js';
+    import pageRecords from '@/admin/views/common/PageRecords.vue';
+    import BreadCrumb from '@/admin/views/common/BreadCrumb';
+    import Constants from '@/admin/types/models/constants.js';
+    import courseBilling from '@/admin/views/courses/CourseBilling.vue';
+    import { confirmTabChangeAction } from '@/common/helper.js';
+    import courseMaterials from '@/admin/views/courses/CourseMaterials.vue';
+
+    export default {
+        name: 'CourseDetails',
+        components: {
+            VueGoodTable,
+            BAvatar,
+            BBadge,
+            BPagination,
+            BFormGroup,
+            BFormInput,
+            BFormSelect,
+            BDropdown,
+            BDropdownItem,
+            ChevronRightIcon,
+            ChevronLeftIcon,
+            courseTasks,
+            courseAuditLog,
+            BTabs,
+            BTab,
+            pageRecords,
+            BreadCrumb,
+            Constants,
+            courseBilling,
+            courseMaterials
+        },
+        async mounted() {
+            this.fetchCourseId();
+        },
+        beforeRouteUpdate(to, from, next) {
+            if(to.query.tab != undefined && to.query.tab != from.query.tab)
+            {
+                this.shouldAllowNavigation = true;
+                if(from.query.tab != undefined && this.isFormDirty(from.query.tab))
+                {
+                    confirmTabChangeAction(this.$swal).then((result) => {
+                        if(result.isConfirmed)
+                        {
+                            this.courseActiveTag = to.query.tab;
+                            next(true);
+                        }
+                        else
+                        {
+                            this.shouldAllowNavigation = false;
+                            next(false)
+                        }
+                    }); 
+                }
+                else
+                {
+                    this.courseActiveTag = to.query.tab;
+                    next(true);
+                }
+            }
+            else
+            {
+                next(true);
+            }         
+        },
+        beforeRouteLeave(to, from, next) {
+            if(from.query.tab != undefined && this.isFormDirty(from.query.tab))
+            {
+                confirmTabChangeAction(this.$swal).then((result) => {
+                    if(result.isConfirmed)
+                    {
+                        next(true);
+                    }
+                    else
+                    {
+                        next(false)
+                    }
+                }); 
+            }
+            else
+            {
+                next(true);
+            }         
+        },
+        data() {
+            let courseTab = {
+                Details: 0,
+                CourseBilling: 1,
+                TaskToBeDone: 2,
+                CourseMaterials: 3,
+                AuditLog: 4,
+            }
+            return {
+                enumUserCategory: this.$constants.enumUserCategory,
+                currentPage: this.$constants.firstPage,
+                courseResponse,
+                courseDesc: null,
+                capacity: null,
+                pageLength: 10,
+                dir: false,
+                routeCategoryValue: this.$route.params.routeCategoryValue,
+                enumCourseStatus: this.$constants.enumCourseStatus,
+                columns: [
+                    {
+                        label: 'Class Name',
+                        field: 'className',
+                    },
+                    {
+                        label: 'Class Status',
+                        field: 'classStatusName',
+                    },
+                    {
+                        label: 'Classroom',
+                        field: 'classroom.room',
+                    },
+                    {
+                        label: 'Capacity',
+                        field: 'capacity',
+                        type: 'number',
+                    },
+                    {
+                        label: 'Start Time',
+                        field: 'startDate',
+                        formatFn: this.formatDateTimeWithoutSecond,
+                        tdClass: 'text-center',
+                    },
+                    {
+                        label: 'End Time',
+                        field: 'endDate',
+                        formatFn: this.formatDateTimeWithoutSecond,
+                        tdClass: 'text-center',
+                    },
+                ],
+                rows: [],
+                searchTerm: '',
+                isGridDataLoaded: false,
+                classes: [],
+                totalCourseClassRows: 0,
+                status: null,
+                error: false,
+                errorMessage: null,
+                courseStatus,
+                displayCourseStatus: "",
+                courseTab,
+                accesses: [],
+                materialSearchTerm: '',
+                isMaterialsLoaded: false,
+                materials: [],
+                courseId: this.$route.params.courseId,
+                totalCourseMaterialRows: 0,
+                isMain: false,
+                materialColumns: [
+                    {
+                        label: 'Type',
+                        field: 'type',
+                        width: '5%',
+                    },
+                    {
+                        label: 'File Name',
+                        field: 'originalFileName',
+                        width: '58%',
+                    },
+                    {
+                        label: 'Uploaded On',
+                        field: 'lastModifiedOn',
+                        formatFn: this.formatDateTimeWithoutSecond,
+                        width: '12%',
+                    },
+                    {
+                        label: 'Uploaded By',
+                        field: 'lastModifiedBy',
+                        width: '15%',
+                    },
+                    {
+                        label: 'Download',
+                        field: 'download',
+                        width: '10%',
+                        thClass: 'text-center',
+                        sortable: false,
+                        tdClass: 'text-center',
+                    },
+                ],
+                courseActiveTag: this.$route.query.tab != undefined ? parseInt(this.$route.query.tab) : this.courseTab.Details,
+                shoulAllowNavigation: false,
+            }
+        },
+        computed: {
+            direction() {
+                this.dir = false
+                return this.dir
+            },
+            currentUserRole: function () {
+                return this.$store.state.user.currentUserRole;
+            },
+            canAccessMainTab: function () {
+                return this.isMain;
+            },
+            canAccessClassBillingTab: function () {
+                return this.accesses.CanViewCourseBilling && !this.courseResponse.isPathloreOrCBTCourse && this.courseResponse.modalityId != this.$constants.enumModality.AILT && this.courseResponse.courseTypeId != this.$constants.enumCourseType.AgencyILTOREL;
+            },
+            canAccessTaskTab: function () {
+                return this.accesses.CanViewTask && !this.courseResponse.isPathloreOrCBTCourse && this.courseResponse.modalityId != this.$constants.enumModality.AILT && this.courseResponse.courseTypeId != this.$constants.enumCourseType.AgencyILTOREL;
+            },
+            canAccessMaterialsTab: function () {
+                // need to set access for materials tab, currently using same access as task tab
+                return this.accesses.CanViewTask && !this.courseResponse.isPathloreOrCBTCourse && this.courseResponse.modalityId != this.$constants.enumModality.AILT && this.courseResponse.courseTypeId != this.$constants.enumCourseType.AgencyILTOREL;
+            },
+            canAccessAuditLogTab: function () {
+                return this.accesses.CanViewAudit && !this.courseResponse.isPathloreOrCBTCourse;
+            },
+        },
+        methods: {
+            onTabChange(nextTab, prevTab, bvEvent) {
+                if(!this.shouldAllowNavigation)
+                {
+                    bvEvent.preventDefault();
+                    this.$router.push({ name: 'courseDetails', params: { courseId: this.courseId, routeCategoryValue: this.routeCategoryValue }, query: { tab: nextTab } });
+                }
+                else
+                {
+                    this.shouldAllowNavigation = false;
+                }
+            },
+            redirect()
+            {
+                if(this.courseResponse.courseId != 0)
+                {
+                    this.$router.push({ name: 'courseDetails', params: { courseId: this.courseId, routeCategoryValue: this.routeCategoryValue }, query: { tab: this.courseTab.Details } });
+                }
+            },
+            async fetchCourseId() {
+                let courseId = this.courseId;
+
+                if (courseId != undefined && courseId != 0) {
+                    this.getCourseDetails(courseId);
+                }
+            },
+            isFormDirty(tab) {
+                return (tab == this.courseTab.CourseBilling && this.$refs.courseBillingRef != undefined && this.$refs.courseBillingRef.formDirty) ||
+                    (tab == this.courseTab.CourseMaterials && this.$refs.courseMaterialRef != undefined && this.$refs.courseMaterialRef.formDirty) ||
+                    (tab == this.courseTab.TaskToBeDone && this.$refs.courseTasksRef != undefined && this.$refs.courseTasksRef.formDirty);
+            },
+            getCourseDetails: async function (courseId) {
+                this.$http.get(`${this.$urls.Course}/${courseId}` + '/details')
+                    .then((res) => {
+                        this.courseResponse = res.data.data[0];
+                        this.accesses = res.data.accesses;
+                        this.courseDesc = this.courseResponse.courseDescription;
+                        this.classes = this.courseResponse.classes;
+                        this.totalCourseClassRows = this.classes.length;
+                        this.status = this.courseResponse.status;
+                        this.displayModality();
+                        this.isGridDataLoaded = true;
+                        this.isMain = true;
+                    });
+            },
+            archiveCourse() {
+                this.$swal.fire({
+                    text: 'Are you sure you want to archive this Course?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    customClass: {
+                        confirmButton: 'btn btn-blue',
+                        cancelButton: 'btn btn-secondary mr-1',
+                    },
+                    buttonsStyling: false,
+                    reverseButtons: true,
+                }).then(result => {
+                    if (result.value) {
+                        this.$http.post(`${this.$urls.Course}/${this.courseResponse.courseId}` + '/archive')
+                            .then((res) => {
+                                toast.success("Course is Archived");
+                                this.$router.push({ name: 'courseList', params: { routeCategoryValue: this.routeCategoryValue } })
+                            });
+                    }
+                })
+            },
+            editCourse: function (courseId) {
+                this.$router.push({ name: 'course', params: { courseId: courseId, routeCategoryValue: this.routeCategoryValue } , query: { tab: 0 }})
+            },
+            openCreateClass: function (courseId) {
+                this.$router.push({ name: 'class', query: { courseId: courseId }, params: { routeCategoryValue: this.routeCategoryValue } })
+            },
+            deleteCourse: async function () {
+                this.$swal.fire({
+                    text: 'Are you sure you want to delete this Course?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    customClass: {
+                        confirmButton: 'btn btn-blue',
+                        cancelButton: 'btn btn-secondary g-px-20 mr-1',
+                    },
+                    buttonsStyling: false,
+                    reverseButtons: true,
+                }).then(result => {
+                    if (result.value) {
+                        let courseId = this.courseId;
+                        this.$http.delete(`${this.$urls.Course}/${courseId}` + '/Delete')
+                            .then(response => {
+                                if (response.data.success) {
+                                    toast.success(response.data.message);
+                                    this.$router.push({ name: 'courseList', params: { routeCategoryValue: this.routeCategoryValue } })
+                                }
+                                else {
+                                    toast.error(response.data.message);
+                                }
+                            });
+                    }
+                })
+            },
+            displayModality() {
+                let modalityId = this.courseResponse.modalityId;
+
+                switch (modalityId) {
+                    case modalityType.ILT:
+                        this.displayCourseStatus = this.courseResponse.modalityType;
+                        break;
+                    case modalityType.elearning:
+                        this.displayCourseStatus = this.courseResponse.modalityType;
+                        break;
+                    case modalityType.Blend:
+                        let modalityName = this.courseResponse.modalityType + ' (';
+
+                        for (var i = 0; i < this.courseResponse.courseTrainingTypes.length; i++) {
+                            if (i != 0) {
+                                modalityName = modalityName + ', ';
+                            }
+
+                            modalityName = modalityName + this.courseResponse.courseTrainingTypes[i].trainingType1;
+                        }
+
+                        modalityName = modalityName + ')';
+                        this.displayCourseStatus = modalityName;
+                        break;
+                    case modalityType.Virtual:
+                        this.displayCourseStatus = this.courseResponse.modalityType;
+                        break;
+                    default:
+                        this.displayCourseStatus = this.courseResponse.modalityType;
+                }
+            },
+            onSortChange() {
+                this.currentPage = this.$constants.firstPage;
+            },
+            onCourseClassSearch(params) {
+                this.totalCourseClassRows = params.rowCount;
+            },
+        }
+    }
+</script>

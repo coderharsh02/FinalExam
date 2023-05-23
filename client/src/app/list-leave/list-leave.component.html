@@ -1,0 +1,73 @@
+<div class="container" *ngIf="UserDetail">
+  <h1>Leave History</h1>
+
+  <div class="content">
+    <h4>datepicker should display current date and defalut selection</h4>
+    <div class="d-flex align-items-center justify-content-between" [formGroup]="FilterDates">
+      <mat-form-field>
+        <mat-label>Choose From date</mat-label>
+        <input matInput [matDatepicker]="picker1" formControlName="FromDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Choose To date</mat-label>
+        <input matInput [matDatepicker]="picker2" [min]="fromDate?.value" formControlName="ToDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+
+      <div>
+        <button type="button" class="btn btn-primary" (click)="filterLeaves()"
+          [disabled]="!FilterDates.valid">Filter</button>
+        <button type="button" class="btn btn-danger" (click)="removeFilter()">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <table>
+    <tr>
+      <th>LeaveId</th>
+      <th>From Date</th>
+      <th>To Date</th>
+      <th>Reason</th>
+      <th>LeaveType</th>
+      <th>Approval</th>
+      <th *ngIf="role == 0">Approve</th>
+      <th *ngIf="role == 0">Reject</th>
+    </tr>
+    <tr *ngFor="let leave of userLeaveHistory">
+
+      <td><span *ngIf="leave.leaveType == 'sl'; else simple"><a [href]="'https://localhost:7127/resources/certificates/' + leave.id +'.txt'"
+            target="_blank">{{leave.id}}</a></span>
+          <ng-template #simple>
+            {{leave.id}}
+          </ng-template>
+          </td>
+      <td>{{ leave.fromDate | date }}</td>
+      <td>{{ leave.toDate | date }}</td>
+      <td>{{ leave.reason }}</td>
+      <td>{{ leave.leaveType }}</td>
+      <td>
+        {{
+        leave.isApproved == null
+        ? "Pending"
+        : leave.isApproved
+        ? "Approved"
+        : "Rejected"
+        }}
+      </td>
+      <td *ngIf="role == 0">
+        <button type="button" class="btn btn-primary" [disabled]="leave.isApproved != null" (click)="approve(leave.id)">
+          Approve
+        </button>
+      </td>
+      <td *ngIf="role == 0">
+        <button type="button" class="btn btn-danger" [disabled]="leave.isApproved != null" (click)="reject(leave.id)">
+          Reject
+        </button>
+      </td>
+    </tr>
+  </table>
+</div>

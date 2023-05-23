@@ -1,0 +1,11 @@
+<button (click)="view = 1">View Forms</button>
+<button (click)="view = 2">Create Form</button>
+
+<ng-container *ngIf="view == 1">
+    <app-list-leave [role]="1" [username]="username"></app-list-leave>
+</ng-container>
+
+<ng-container *ngIf="view == 2">
+    <app-add-leave></app-add-leave>
+</ng-container>
+
